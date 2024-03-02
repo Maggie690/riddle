@@ -17,6 +17,7 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 public class Dictionary {
 
+    @Cacheable("dictionaryMap")
     public TreeMap<String, List<String>> getDictionary() throws IOException {
         List<String> dictionary = loadWords();
 
