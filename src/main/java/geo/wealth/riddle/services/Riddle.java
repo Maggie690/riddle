@@ -20,13 +20,8 @@ public class Riddle {
 
     private final Dictionary dictionary;
 
-    private TreeMap<String, List<String>> wordsAlphabetic = new TreeMap<>();
-
     public void findWords(String word) throws IOException {
-
-        if (wordsAlphabetic.isEmpty()) {
-            wordsAlphabetic = dictionary.getDictionary();
-        }
+        TreeMap<String, List<String>> wordsAlphabetic = dictionary.getDictionary();
 
         Set<String> foundWords = new HashSet<>();
 
@@ -64,16 +59,15 @@ public class Riddle {
             return null;
         }
 
-        if (wordsAlphabetic.isEmpty()) {
-            wordsAlphabetic = dictionary.getDictionary();
-        }
+        TreeMap<String, List<String>> wordsAlphabetic = dictionary.getDictionary();
 
         Set<String> foundWords = new HashSet<>();
 
         recursion(word, foundWords);
 
         Set<String> realWords = checkWordExist(foundWords, wordsAlphabetic);
-        double elapsedTimeInSecond = calculateTimeInSeconds(startTime);
+        long endTime = System.nanoTime();
+        double elapsedTimeInSecond = calculateTimeInSeconds(startTime, endTime);
 
         return new RiddleDto(realWords, elapsedTimeInSecond);
     }
@@ -84,6 +78,7 @@ public class Riddle {
 
             recursion(word.substring(1), words);
             recursion(word.substring(0, word.length() - 1), words);
+            System.out.println("--> " + word);
         }
     }
 
@@ -108,8 +103,7 @@ public class Riddle {
         }
     }
 
-    private static double calculateTimeInSeconds(long startTime) {
-        long endTime = System.nanoTime();
+    private static double calculateTimeInSeconds(long startTime, long endTime) {
         double elapsedTime = (endTime - startTime) / 1e6;
         return elapsedTime / ONE_SECOND;
     }
