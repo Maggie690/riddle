@@ -66,10 +66,29 @@ public class Riddle {
         recursion(word, foundWords);
 
         Set<String> realWords = checkWordExist(foundWords, wordsAlphabetic);
+        Set<String> matchedWords = getFirstMatches(word, realWords);
+
         long endTime = System.nanoTime();
         double elapsedTimeInSecond = calculateTimeInSeconds(startTime, endTime);
 
-        return new RiddleDto(realWords, elapsedTimeInSecond);
+        return new RiddleDto(matchedWords, elapsedTimeInSecond);
+    }
+
+    private Set<String> getFirstMatches(String primaryWord, Set<String> words) {
+        Set<String> matchedWords = new HashSet<>();
+
+        int worldLength = primaryWord.length() - 1;
+
+        while (worldLength > 0) {
+            for (String w : words) {
+                if (w.length() == worldLength) {
+                    matchedWords.add(w);
+                    break;
+                }
+            }
+            worldLength--;
+        }
+        return matchedWords;
     }
 
     private void recursion(String word, Set<String> words) {
@@ -78,7 +97,6 @@ public class Riddle {
 
             recursion(word.substring(1), words);
             recursion(word.substring(0, word.length() - 1), words);
-            System.out.println("--> " + word);
         }
     }
 
@@ -97,13 +115,13 @@ public class Riddle {
         return realWorlds;
     }
 
-    private static void addExcludedLetterFromDictionary(Set<String> foundWords, TreeSet<String> realWorlds, String letter) {
+    private void addExcludedLetterFromDictionary(Set<String> foundWords, TreeSet<String> realWorlds, String letter) {
         if (foundWords.contains(letter)) {
             realWorlds.add(letter);
         }
     }
 
-    private static double calculateTimeInSeconds(long startTime, long endTime) {
+    private double calculateTimeInSeconds(long startTime, long endTime) {
         double elapsedTime = (endTime - startTime) / 1e6;
         return elapsedTime / ONE_SECOND;
     }
