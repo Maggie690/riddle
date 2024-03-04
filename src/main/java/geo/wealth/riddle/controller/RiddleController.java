@@ -9,8 +9,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.io.IOException;
-
 import static geo.wealth.riddle.controller.RiddleController.BASE;
 
 @RestController
@@ -22,7 +20,7 @@ public class RiddleController {
     private final Riddle riddle;
 
     @GetMapping("/{word}")
-    public ResponseDto<RiddleDto> getWords(@PathVariable("word") String word) throws IOException {
-        return ResponseDto.response(riddle.findWordsByRecursion(word.toUpperCase()));
+    public ResponseDto<RiddleDto> getWords(@PathVariable("word") String word) throws Exception {
+        return ResponseDto.response(riddle.findWordsByRecursion(word.trim().toUpperCase()));
     }
 }

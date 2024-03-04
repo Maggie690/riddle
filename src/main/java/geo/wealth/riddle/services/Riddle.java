@@ -1,6 +1,8 @@
 package geo.wealth.riddle.services;
 
 import geo.wealth.riddle.dto.RiddleDto;
+import geo.wealth.riddle.exception.CodedException;
+import geo.wealth.riddle.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -45,18 +47,15 @@ public class Riddle {
         foundWords.forEach(System.out::println);
     }
 
-    public RiddleDto findWordsByRecursion(String word) throws IOException {
+    public RiddleDto findWordsByRecursion(String word) throws Exception {
         long startTime = System.nanoTime();
 
         if (word.isBlank()) {
-            //do something
-            return null;
+            throw new CodedException(ErrorCode.EMPTY_INPUT);
         }
 
         if (!word.matches(REGEX_LETTERS)) {
-            //do something
-            System.out.println("some exception");
-            return null;
+            throw new CodedException(ErrorCode.INVALID_WORD_CHARACTERS, word);
         }
 
         TreeMap<String, List<String>> wordsAlphabetic = dictionary.getDictionary();
@@ -72,23 +71,6 @@ public class Riddle {
         double elapsedTimeInSecond = calculateTimeInSeconds(startTime, endTime);
 
         return new RiddleDto(matchedWords, elapsedTimeInSecond);
-    }
-
-    private Set<String> getFirstMatches(String primaryWord, Set<String> words) {
-        Set<String> matchedWords = new HashSet<>();
-
-        int worldLength = primaryWord.length() - 1;
-
-        while (worldLength > 0) {
-            for (String w : words) {
-                if (w.length() == worldLength) {
-                    matchedWords.add(w);
-                    break;
-                }
-            }
-            worldLength--;
-        }
-        return matchedWords;
     }
 
     private void recursion(String word, Set<String> words) {
@@ -113,6 +95,23 @@ public class Riddle {
         addExcludedLetterFromDictionary(foundWords, realWorlds, I);
 
         return realWorlds;
+    }
+
+    private Set<String> getFirstMatches(String primaryWord, Set<String> words) {
+        Set<String> matchedWords = new HashSet<>();
+
+        int worldLength = primaryWord.length() - 1;
+
+        while (worldLength > 0) {
+            for (String w : words) {
+                if (w.length() == worldLength) {
+                    matchedWords.add(w);
+                    break;
+                }
+            }
+            worldLength--;
+        }
+        return matchedWords;
     }
 
     private void addExcludedLetterFromDictionary(Set<String> foundWords, TreeSet<String> realWorlds, String letter) {
